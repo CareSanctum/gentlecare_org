@@ -46,7 +46,7 @@ export const PersonalInfoCard = ({ personalInfo }: PersonalInfoProps) => {
       setprofile_url("");  
   
       // ✅ Upload file to the backend first
-      await sendfileRequest(formData, accessToken);
+      await sendfileRequest(formData);
   
       // ✅ Only update profile_url after getting a successful response
       fetchprofilePicture();

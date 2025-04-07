@@ -10,8 +10,9 @@ import { VideoIcon, Calendar as CalendarIcon, User } from 'lucide-react';
 import { Input } from './ui/input';
 import { useAppSelector } from '@/store/hooks';
 import { schedulevisitRequest } from '@/requests/schedulevisitRequest';
-import useTickets from '@/hooks/use-tickets';
 import useVisitData from '@/hooks/use-visits';
+import { HomepageConfig } from '@/hooks/use-HomeConfig';
+import { BlurredScheduler } from './BlurredComponents/Blurred_Scheduler';
 
 
 const changeDateFormat = (date: string): string => {
@@ -21,7 +22,7 @@ const changeDateFormat = (date: string): string => {
   return datePart + " " +  timePart;
 }
 
-export const BuddyScheduler = () => {
+export const BuddyScheduler = ({config}: {config: HomepageConfig}) => {
   const { toast } = useToast();
   const [date, setDate] = React.useState<Date | null>(null);
   const [timeSlot, setTimeSlot] = React.useState<string>("");
@@ -60,6 +61,7 @@ export const BuddyScheduler = () => {
     window.open(fileurl, "_blank"); // Opens PDF in a new tab
 }
 
+
   const renderScheduler = (type: 'care_manager' | 'doctor' | 'buddy') => {
     return (
       <div className="space-y-4">
@@ -84,13 +86,21 @@ export const BuddyScheduler = () => {
     );
   };
 
+  const needsBlur = (Servicename: string) => {
+    const feature = config?.features.find((feature) => feature.name === Servicename);
+    return feature ? true : false;
+  }
+  const getRestrictedMessage = (name: string) => {
+    return config?.features.find(f => f.name === name)?.restrictedMessage ?? "Restricted";
+  };
+  
   return (
-    <Card className="shadow-md">
+    <Card className="shadow-md h-full">
       <CardHeader>
         <CardTitle className="text-xl font-semibold text-primary">Schedule Visits</CardTitle>
       </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="care_manager" className="space-y-4">
+      <CardContent className="overflow-auto">
+        <Tabs defaultValue="care_manager" className="space-y-4 h-full flex flex-col">
           <TabsList className="grid grid-cols-3 gap-4">
             <TabsTrigger value="care_manager"
               onClick={() => {
@@ -128,7 +138,7 @@ export const BuddyScheduler = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="care_manager" className="space-y-4">
+          {needsBlur("ScheduleVisits_CM") ? <TabsContent value="care_manager" className="space-y-4 flex-1 flex flex-col">
             {!showCareManagerScheduler ? (
               <div className="p-4 bg-gray-50 rounded-lg">
                 <h3 className="font-medium mb-2">Next Scheduled Visit</h3>
@@ -143,7 +153,7 @@ export const BuddyScheduler = () => {
                 </Button>
               </div>
             ) : renderScheduler('care_manager')}
-          </TabsContent>
+          </TabsContent>: <BlurredScheduler RestrictedText={getRestrictedMessage("ScheduleVisits_CM")}/>}
 
           <TabsContent value="doctor" className="space-y-4">
             {!showDoctorScheduler ? (
@@ -167,7 +177,7 @@ export const BuddyScheduler = () => {
             ) : renderScheduler('doctor')}
           </TabsContent>
 
-          <TabsContent value="buddy" className="space-y-4">
+          {needsBlur("ScheduleVisits_Buddy") ? <TabsContent value="buddy" className="space-y-4">
               {!showBuddyScheduler ? (
               <div className="p-4 bg-gray-50 rounded-lg">
                 <h3 className="font-medium mb-2">Next Scheduled Visit</h3>
@@ -183,7 +193,7 @@ export const BuddyScheduler = () => {
                 </div>
               </div>
             ) : renderScheduler('doctor')}
-          </TabsContent>
+          </TabsContent>: <BlurredScheduler RestrictedText={getRestrictedMessage("ScheduleVisits_Buddy")}/>}
         </Tabs>
       </CardContent>
     </Card>

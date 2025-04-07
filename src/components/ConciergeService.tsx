@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 // import { useTickets } from '@/hooks/use-tickets';
 import { useAppSelector } from '@/store/hooks';
 import { newConciergeService } from '@/requests/newconciergeService';
+import { LockKeyhole } from 'lucide-react';
 
 type ServiceState = {
   [key: string]: boolean;
@@ -96,12 +97,14 @@ export const ConciergeService = () => {
       <CardHeader>
         <CardTitle className="text-xl font-semibold text-primary">Concierge Services</CardTitle>
       </CardHeader>
+      <div className="relative">
       <CardContent className="grid grid-cols-2 gap-4">
         {renderServiceButton("Medicine Delivery", <Pill className="h-6 w-6" />)}
         {renderServiceButton("Cab Booking", <Car className="h-6 w-6" />)}
         {renderServiceButton("Grocery Shopping", <ShoppingBag className="h-6 w-6" />)}
         {renderServiceButton("Other Assistance", <Phone className="h-6 w-6" />)}
       </CardContent>
+    </div>
     </Card>
   );
 };

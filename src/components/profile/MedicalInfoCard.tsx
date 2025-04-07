@@ -17,15 +17,7 @@ interface MedicalInfoProps {
 
 export const MedicalInfoCard = ({ medicalInfo }: MedicalInfoProps) => {
 
-  const openPrescPdf = () => {
-    if (medicalInfo?.PrescsUrl) {
-      window.open(medicalInfo.PrescsUrl, "_blank"); // Opens PDF in a new tab
-    }
-  }
-  const getFileName = (url: string | null) => {
-    if (!url) return "No Prescriptions"; // Handle case where URL is missing
-    return url.split("/").pop() || "Unknown File"; // Extract file name from URL
-  };
+
 
 
   return (
